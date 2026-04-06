@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juanca'sino</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="welcome-body">
+    <div class="overlay"></div>
+    <div class="login-box">
+        <h1 class="neon-text">JUANCA' <span class="gold">SINO</span></h1>
+        <p class="subtitle">El mejor casino, recibe tu bono de bienvenida en el correo!!</p>
+        
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Ingresa tu nombre..." required>
+            <button onclick="guardarYEntrar()" class="btn-glow">¡JUGAR YA!</button>
+        </div>
+    </div>
+
+    <script>
+        async function guardarYEntrar() {
+            const nombreInput = document.getElementById('username');
+            const nombre = nombreInput.value.trim();
+
+            if (nombre.length < 3) {
+                alert("¡Oye! Ingresa al menos 3 caracteres para tu nombre.");
+                return;
+            }
+
+            try {
+                // ENVIAR AL SERVIDOR (Puerto 3000)
+                const respuesta = await fetch('http://localhost:3000/api/login', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ nombre: nombre })
+});
+
+                if (!respuesta.ok) {
+                    throw new Error("Error en el servidor");
+                }
+
+                const datosUsuario = await respuesta.json();
+
+                
+
+                // Guardamos la sesión para el Dashboard
+                localStorage.setItem('sesion_actual', JSON.stringify(datosUsuario));
+
+                // Redirigimos al lobby
+                window.location.href = "dashboard.html";
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert("No se pudo conectar con el servidor. Asegúrate de que 'node server.js' esté corriendo.");
+            }
+        }
+    </script>
+</body>
+</html>
